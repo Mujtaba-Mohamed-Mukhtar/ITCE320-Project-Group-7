@@ -12,3 +12,4 @@ print('='*15,'Server is ready','='*15)
 with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as Server_socket:
     Server_socket.bind(ServerAddress)
     Server_socket.listen()
+    socket_A, Address = Server_socket.accept()
