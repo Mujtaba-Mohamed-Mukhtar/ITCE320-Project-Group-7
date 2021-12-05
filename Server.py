@@ -10,6 +10,8 @@ Encoding = 'ascii'
 print('='*15,'Server is ready','='*15)
 
 with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as Server_socket:
-    Server_socket.bind(ServerAddress)
+    Server_socket.bind(ServerAddress) #Creating the server socket and assigning IP address and port number
     Server_socket.listen()
     socket_A, Address = Server_socket.accept()
+
+    
