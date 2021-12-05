@@ -1,6 +1,7 @@
 import socket
+import json
 
-ServerAddress = ('127.0.0.1', 60060)
+ServerAddress = ('127.0.0.1', 60060) 
 BufferSize = 4096
 Encoding = 'ascii'
 
