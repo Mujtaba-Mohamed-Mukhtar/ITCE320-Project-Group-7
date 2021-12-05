@@ -10,3 +10,5 @@ with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as Client_socket:
     print('='*15,'Client is ready','='*15,'\n')
 
     Name = input('User Name: ')
+
+    Client_socket.send(Name.encode(Encoding))

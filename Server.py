@@ -18,7 +18,7 @@ def connection (socket, address):
 
     print('='*5,Name,'is connected','='*5)
 
-    
+
 
 with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as Server_socket:
     Server_socket.bind(ServerAddress) #Creating the server socket and assigning IP address and port number
