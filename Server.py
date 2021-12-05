@@ -27,5 +27,5 @@ with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as Server_socket:
 
     thread1 = threading.Thread(target=connection, args=(socket_A,Address))
 
-
+okkkkkkkk
     
