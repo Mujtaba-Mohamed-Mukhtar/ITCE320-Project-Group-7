@@ -25,7 +25,19 @@ with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as Client_socket:
         Client_socket.send(str(option).encode(Encoding))
 
         if option == 1:
-            print()
+
+            while True:
+               record = Client_socket.recv(BufferSize).decode(Encoding)
+
+               if record == '$T0P':
+                   break
+
+               print(record)
+
+
+
+
+
 
 
 

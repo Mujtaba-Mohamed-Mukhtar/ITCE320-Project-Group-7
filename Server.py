@@ -38,6 +38,19 @@ def connection (socket, address):
 
             json.dump(api_result.json(), file, indent=3)
 
+        with open('group_7.json', 'r') as File:
+
+            content = File.read()
+
+            json_result = json.loads(content)
+
+            print('='*10,'Sending data','='*10)
+            for records in json_result['data']:
+                socket.send(records["departure"]["icao"].encode(Encoding))
+                print(end=' ')
+            print('='*10,'data has been sent','='*10)
+            socket.send('$T0P'.encode(Encoding))
+
 
 
 
