@@ -1,13 +1,17 @@
 import socket
 import json
+import Functions
 
 ServerAddress = ('127.0.0.1', 60060) 
 BufferSize = 4096
 Encoding = 'ascii'
 
 with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as Client_socket:
-    Client_socket.connect(ServerAddress)
-    print('='*15,'Client is ready','='*15,'\n\n')
+    try:
+        Client_socket.connect(ServerAddress)
+        print('='*15,'Client is ready','='*15,'\n\n')
+    except:
+        print('='*15,'Failed to connect to the server ','='*15,'\n\n')
 
     Name = input('User Name: ')
 
@@ -25,14 +29,16 @@ with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as Client_socket:
         Client_socket.send(str(option).encode(Encoding))
 
         if option == 1:
+            Functions.receiving_records(Client_socket)
 
-            while True:
-               record = Client_socket.recv(BufferSize).decode(Encoding)
 
-               if record == '$T0P':
-                   break
 
-               print(record)
+
+
+
+
+
+
 
 
 
