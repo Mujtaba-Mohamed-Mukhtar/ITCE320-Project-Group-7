@@ -16,6 +16,10 @@ def connection(socket, address):
     Name = socket.recv(BufferSize).decode(Encoding)
 
     print('=' * 5, Name, 'is connected', '=' * 5, '\n')
+    parameters = {}
+
+    access_key = 'af98ac91fb0e2ce7816d4d1b074a2b65'
+    limit = 5
 
 
 
@@ -23,6 +27,8 @@ def connection(socket, address):
     option = int(socket.recv(BufferSize).decode(Encoding))
 
     with open('group_7.json','w') as file:
+
+        while True:
 
         parameters = {}
         access_key = '6c8e01ffa60812094c287f7e6a3fd765'
@@ -84,17 +90,16 @@ def connection(socket, address):
 
         Functions.send_records(socket,option,x)
 
+    print('=' * 5, 'request received from', Name, '=' * 5, '\n')
+
+    Functions.send_records(socket, option, jason_results)
 
 
 
 
 
 
-
-
-
-
-
+    
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as Server_socket:
     Server_socket.bind(ServerAddress)  # Creating the server socket and assigning IP address and port number
@@ -103,3 +108,17 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as Server_socket:
 
     thread1 = threading.Thread(target=connection, args=(socket_A, Address))
     thread1.start()
+
+
+
+
+
+
+
+
+
+
+
+
+
+

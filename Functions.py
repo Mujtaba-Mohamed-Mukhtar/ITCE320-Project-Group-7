@@ -28,6 +28,7 @@ def send_records (socket, option, json_response):
 
 
         print('  records sent\n')
+        socket.send('$T0P'.encode(Encoding))
 
 
 
@@ -50,6 +51,29 @@ def receiving_records (socket):
               '\nterminal:',terminal.decode(Encoding),
               '\ngate:',gate.decode(Encoding))
         i+=1
+        stop_point+=1
+        
+def recv_delay(socket):
+    i=1
+    stop_point = 0
+    while stop_point < limit
+        flight_code = socket.recv(BufferSize).decode(Encoding)
+        airport = socket.recv(BufferSize).decode(Encoding)
+        departure = socket.recv(BufferSize).decode(Encoding)
+        arrival = socket.recv(BufferSize).decode(Encoding)
+        terminal = socket.recv(BufferSize).decode(Encoding)
+        gate = socket.recv(BufferSize).decode(Encoding)
+
+        print('=' * 15, 'flight', i, '=' * 15)
+        print('  flight code:', flight_code,
+              '\n  airport:', airport,
+              '\n  departure time:', departure,
+              '\n  arrival time:', arrival,
+              '\n  terminal:', terminal,
+              '\n  gate:', gate)
+        i += 1
+        stop_point += 1
+        
 
 
 

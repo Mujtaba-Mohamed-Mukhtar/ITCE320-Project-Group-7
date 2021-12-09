@@ -31,6 +31,15 @@ with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as Client_socket:
         if option == 1:
             Functions.receiving_records(Client_socket)
 
+        elif option == 2:
+           Functions.recv_delay()
+
+        else:
+          break
+
+
+            
+
 
 
 
