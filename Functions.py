@@ -53,7 +53,30 @@ def send_records (socket, option, json_response):
             socket.send(str(records["departure"]["gate"]).encode(Encoding))
             time.sleep(0.01)
         print('  records sent\n')
-        socket.send('$T0P'.encode(Encoding))
+
+
+    elif option == 3:
+
+        for records in json_response['data']:
+            socket.sendall(records["flight"]["iata"].encode(Encoding))
+            time.sleep(0.01)
+
+            socket.send(records["departure"]["airport"].encode(Encoding))
+            time.sleep(0.01)
+
+            socket.send(str(records["departure"]["actual"]).encode(Encoding))
+            time.sleep(0.01)
+
+            socket.send(str(records["arrival"]["estimated"]).encode(Encoding))
+            time.sleep(0.01)
+
+            socket.send(str(records["departure"]["terminal"]).encode(Encoding))
+            time.sleep(0.01)
+
+            socket.send(str(records["departure"]["gate"]).encode(Encoding))
+            time.sleep(0.01)
+        print('  records sent\n')
+
 
 
 
@@ -87,7 +110,7 @@ def receiving_records (socket):
 
 
 
-def recv_delay(socket):
+def recv_flights(socket):
 
     i =1
     stop_point =0

@@ -18,7 +18,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as Client_socket:
           '\n  1. Arrived flights. ',
           '\n  2. Delayed flights.',
           '\n  3. All flights coming from a specific city.',
-          '\n  4. Details of a particular flight.\n')
+          '\n  4. Details of a particular flight.',
+          '\n  5. Quit.\n')
 
     while True:
 
@@ -28,9 +29,14 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as Client_socket:
         if option == 1:
             Functions.receiving_records(Client_socket)
 
-
         elif option == 2:
-            Functions.recv_delay(Client_socket)
+            Functions.recv_flights(Client_socket)
+
+        elif option == 3:
+            city = input('Enter the city name: ')
+            Client_socket.send(city.encode(Encoding))
+
+            Functions.recv_flights(Client_socket)
 
         else:
             break

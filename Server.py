@@ -25,12 +25,13 @@ def connection(socket, address):
 
     parameters = {}
 
-    access_key = 'af98ac91fb0e2ce7816d4d1b074a2b65'
+    access_key = '3c20cacdeae406247164d1992c2a9fd4'
     limit = 5
 
     with open('group_7.json','w') as file:
 
         option = 0
+
 
         while True:
 
@@ -54,24 +55,32 @@ def connection(socket, address):
                     'limit': limit,
                     'min_delay_arr': 1
                     }
-            elif option == 3:
-                city_name = socket.recv(BufferSize).decode(Encoding)
 
-                city_parameters = {
+            elif option == 3:
+                country_name = socket.recv(BufferSize).decode(Encoding)
+
+                country_parameters = {
                     'access_key': access_key,
-                    'city_name': city_name,
-                    'limit': 1
+                    'limit':1
                 }
-                city_api_response = requests.get('http://api.aviationstack.com/v1/cities', city_parameters)
+                city_api_response = requests.get('http://api.aviationstack.com/v1/airlines', country_parameters)
                 if city_api_response.status_code != 200:
                     print('!' * 5, 'Request error')
-                    city_iata = city_api_response['data']['iata_code']
 
-                    parameters = {
-                        'access_key': access_key,
-                        'limit': limit,
-                        'dep_iata': city_iata
+                json_result = city_api_response.json()
+
+                country_airline = ' '
+
+                for name in json_result['data']:
+                    if name["country_name"] == country_name:
+                        country_airline = name["airline_name"]
+
+                parameters = {
+                    'access_key': access_key,
+                    'limit': limit,
+                    'airline_name':country_airline
                     }
+
             elif option == 4:
                 flight_icao = socket.recv(BufferSize).decode(Encoding)
                 parameters = {
@@ -79,6 +88,7 @@ def connection(socket, address):
                     'limit': limit,
                     'flight_icao': flight_icao
                 }
+
             else:
                 print('=' * 5, Name, 'has disconnected from the server', '=' * 5, '\n')
                 break
