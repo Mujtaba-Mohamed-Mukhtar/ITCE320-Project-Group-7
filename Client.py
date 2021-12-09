@@ -7,11 +7,9 @@ BufferSize = 4096
 Encoding = 'ascii'
 
 with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as Client_socket:
-    try:
-        Client_socket.connect(ServerAddress)
-        print('='*15,'Client is ready','='*15,'\n\n')
-    except:
-        print('='*15,'Failed to connect to the server ','='*15,'\n\n')
+
+    Client_socket.connect(ServerAddress)
+    print('='*15,'Client is ready','='*15,'\n\n')
 
     Name = input('User Name: ')
 
@@ -33,7 +31,7 @@ with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as Client_socket:
 
 
         elif option == 2:
-            Functions.recv_delay()
+            Functions.recv_delay(Client_socket)
 
         else:
             break

@@ -15,10 +15,13 @@ Encoding = 'ascii'
 print('=' * 15, 'Server is ready', '=' * 15, '\n\n')
 
 
+
+
+
 def connection(socket, address):
     Name = socket.recv(BufferSize).decode(Encoding)
-
     print('=' * 5, Name, 'is connected', '=' * 5, '\n')
+
 
     parameters = {}
 
@@ -27,9 +30,15 @@ def connection(socket, address):
 
     with open('group_7.json','w') as file:
 
+        option = 0
+
         while True:
 
-            option = int(socket.recv(BufferSize).decode(Encoding))
+            try:
+                option = int(socket.recv(BufferSize).decode(Encoding))
+            except Exception:
+                print('=' * 5, Name, 'has disconnected from the server', '=' * 5, '\n')
+                break
 
             if option == 1:
                 parameters = {
@@ -70,6 +79,10 @@ def connection(socket, address):
                     'limit': limit,
                     'flight_icao': flight_icao
                 }
+            else:
+                print('=' * 5, Name, 'has disconnected from the server', '=' * 5, '\n')
+                break
+
             api_response = requests.get('http://api.aviationstack.com/v1/flights', parameters)
 
             if api_response.status_code != 200:
@@ -83,7 +96,7 @@ def connection(socket, address):
                 jason_results = json.loads(File.read())
                 File.close()
 
-            print('=' * 5,'request received from', Name, '=' * 5, '\n')
+            print('=' * 5, 'request received from', Name, '=' * 5, '\n')
 
             Functions.send_records(socket, option, jason_results)
 
@@ -102,7 +115,11 @@ def connection(socket, address):
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as Server_socket:
     Server_socket.bind(ServerAddress)  # Creating the server socket and assigning IP address and port number
     Server_socket.listen()
-    socket_A, Address = Server_socket.accept()
 
-    thread1 = threading.Thread(target=connection, args=(socket_A, Address))
-    thread1.start()
+    while True:
+        socket_A, Address = Server_socket.accept()
+
+
+        thread1 = threading.Thread(target=connection, args=(socket_A, Address))
+        thread1.start()
+
