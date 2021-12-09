@@ -85,7 +85,7 @@ def connection(socket, address):
                 flight_icao = socket.recv(BufferSize).decode(Encoding)
                 parameters = {
                     'access_key': access_key,
-                    'limit': limit,
+                    'limit': 1,
                     'flight_icao': flight_icao
                 }
 

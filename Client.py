@@ -23,7 +23,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as Client_socket:
 
     while True:
 
-        option = int(input('Select an option =>'))
+        option = int(input('\nSelect an option =>'))
         Client_socket.send(str(option).encode(Encoding))
 
         if option == 1:
@@ -37,6 +37,14 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as Client_socket:
             Client_socket.send(city.encode(Encoding))
 
             Functions.recv_flights(Client_socket)
+
+        elif option == 4:
+            icao = input('Enter the flight icao: ')
+            Client_socket.send(icao.encode(Encoding))
+
+            Functions.flight_details(Client_socket)
+
+
 
         else:
             break
