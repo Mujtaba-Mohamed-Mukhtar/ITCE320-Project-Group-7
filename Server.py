@@ -28,33 +28,31 @@ def connection(socket, address):
     access_key = '3c20cacdeae406247164d1992c2a9fd4'
     limit = 5
 
-    with open('group_7.json','w') as file:
-
-        option = 0
 
 
-        while True:
+    option = 0
+
+
+    while True:
+        with open('group_7.json', 'w') as file:
 
             try:
                 option = int(socket.recv(BufferSize).decode(Encoding))
             except Exception:
                 print('=' * 5, Name, 'has disconnected from the server', '=' * 5, '\n')
                 break
-
             if option == 1:
                 parameters = {
                     'access_key': access_key,
                     'limit': limit,
                     'flight_status': 'landed'
                 }
-
-
             elif option == 2:
                 parameters = {
                     'access_key': access_key,
                     'limit': limit,
                     'min_delay_arr': 1
-                    }
+                }
 
             elif option == 3:
                 country_name = socket.recv(BufferSize).decode(Encoding)
@@ -66,6 +64,7 @@ def connection(socket, address):
                 city_api_response = requests.get('http://api.aviationstack.com/v1/airlines', country_parameters)
                 if city_api_response.status_code != 200:
                     print('!' * 5, 'Request error')
+                    continue
 
                 json_result = city_api_response.json()
 
@@ -79,7 +78,7 @@ def connection(socket, address):
                     'access_key': access_key,
                     'limit': limit,
                     'airline_name':country_airline
-                    }
+                }
 
             elif option == 4:
                 flight_icao = socket.recv(BufferSize).decode(Encoding)
@@ -94,9 +93,9 @@ def connection(socket, address):
                 break
 
             api_response = requests.get('http://api.aviationstack.com/v1/flights', parameters)
-
             if api_response.status_code != 200:
                 print('!' * 5, 'Request error')
+                continue
 
             json.dump(api_response.json(), file, indent=3)
 

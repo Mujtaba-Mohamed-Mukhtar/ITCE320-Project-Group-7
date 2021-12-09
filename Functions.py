@@ -38,13 +38,13 @@ def send_records (socket, option, json_response):
             socket.sendall(records["flight"]["iata"].encode(Encoding))
             time.sleep(0.01)
 
-            socket.send(records["departure"]["airport"].encode(Encoding))
+            socket.send(str(records["departure"]["airport"]).encode(Encoding))
             time.sleep(0.01)
 
-            socket.send(records["departure"]["actual"].encode(Encoding))
+            socket.send(str(records["departure"]["actual"]).encode(Encoding))
             time.sleep(0.01)
 
-            socket.send(records["arrival"]["estimated"].encode(Encoding))
+            socket.send(str(records["arrival"]["estimated"]).encode(Encoding))
             time.sleep(0.01)
 
             socket.send(str(records["departure"]["terminal"]).encode(Encoding))
