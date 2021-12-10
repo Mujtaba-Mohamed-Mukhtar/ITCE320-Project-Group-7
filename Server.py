@@ -67,10 +67,14 @@ def connection(socket, address):
                     print('!' * 5, 'Request error')
                     city_iata = city_api_response['data']['iata_code']
 
+                for name in json_result['data']:
+                    if name["country_name"] == country_name:
+                            country_airline = name["airline_name"]
+
                     parameters = {
                         'access_key': access_key,
                         'limit': limit,
-                        'dep_iata': city_iata
+                        'airline_name': country_airline
                     }
             elif option == 4:
                 flight_icao = socket.recv(BufferSize).decode(Encoding)
