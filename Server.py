@@ -41,13 +41,20 @@ def connection(socket, address):
             except Exception:
                 print('=' * 5, Name, 'has disconnected from the server', '=' * 5, '\n')
                 break
+
+            print('=' * 5, 'request received from', Name, '=' * 5, '\n')
+
             if option == 1:
+                print('  List of  all arrived flights')
+
                 parameters = {
                     'access_key': access_key,
                     'limit': limit,
                     'flight_status': 'landed'
                 }
             elif option == 2:
+                print('  List of delayed flights')
+
                 parameters = {
                     'access_key': access_key,
                     'limit': limit,
@@ -56,6 +63,8 @@ def connection(socket, address):
 
             elif option == 3:
                 country_name = socket.recv(BufferSize).decode(Encoding)
+
+                print('  All flights arriving from',country_name)
 
                 country_parameters = {
                     'access_key': access_key,
@@ -105,7 +114,6 @@ def connection(socket, address):
                 jason_results = json.loads(File.read())
                 File.close()
 
-            print('=' * 5, 'request received from', Name, '=' * 5, '\n')
 
             Functions.send_records(socket, option, jason_results)
 

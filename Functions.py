@@ -8,16 +8,21 @@ limit = 5
 
 def send_records (socket, option, json_response):
 
+
+
     if option == 1:
 
-        print('  List of  all arrived flights')
-
         for records in json_response['data']:
-            socket.sendall(records["flight"]["iata"].encode(Encoding))
+
+            socket.send(records["flight"]["iata"].encode(Encoding))
             time.sleep(0.01)
 
-            socket.send(records["departure"]["airport"].encode(Encoding))
-            time.sleep(0.01)
+            try:
+                socket.send(str(records["departure"]["airport"]).encode(Encoding))
+                time.sleep(0.01)
+            except Exception:
+                socket.send(str(records["arrival"]["airport"]).encode(Encoding))
+                time.sleep(0.01)
 
             socket.send(records["arrival"]["actual"].encode(Encoding))
             time.sleep(0.01)
@@ -27,12 +32,13 @@ def send_records (socket, option, json_response):
 
             socket.send(str(records["arrival"]["gate"]).encode(Encoding))
             time.sleep(0.01)
+
+
+
         print('  records sent\n')
 
+
     elif option == 2:
-
-
-        print('  List of delayed flights')
 
         for records in json_response['data']:
             socket.sendall(records["flight"]["iata"].encode(Encoding))
@@ -137,8 +143,9 @@ def receiving_records (socket):
         arrival = socket.recv(BufferSize)
         terminal = socket.recv(BufferSize)
         gate = socket.recv(BufferSize)
-        if not flight_code:
-            break
+
+
+
 
         print('='*15, 'flight', i, '='*15)
 
