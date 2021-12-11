@@ -46,6 +46,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as Client_socket:
 
 
 
+        elif option == 3:
+            city = input('Enter the city name: ')
+            Client_socket.send(city.encode(Encoding))
+
+            Functions.recv_flights(Client_socket)
+
         else:
             break
 

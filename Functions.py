@@ -127,12 +127,34 @@ def send_records (socket, option, json_response):
 
 
 
+    elif option == 3:
+
+        for records in json_response['data']:
+            socket.sendall(records["flight"]["iata"].encode(Encoding))
+            time.sleep(0.01)
+
+            socket.send(records["departure"]["airport"].encode(Encoding))
+            time.sleep(0.01)
+
+            socket.send(str(records["departure"]["actual"]).encode(Encoding))
+            time.sleep(0.01)
+
+            socket.send(str(records["arrival"]["estimated"]).encode(Encoding))
+            time.sleep(0.01)
+
+            socket.send(str(records["departure"]["terminal"]).encode(Encoding))
+            time.sleep(0.01)
+
+            socket.send(str(records["departure"]["gate"]).encode(Encoding))
+            time.sleep(0.01)
+        print('  records sent\n')
 
 
 
 
 
 
+<<<<<<< HEAD
 def receiving_records (socket):
 
     i = 1
@@ -157,6 +179,8 @@ def receiving_records (socket):
         i+=1
         stop_point+=1
 
+=======
+>>>>>>> f995f7fdac60fe4349b3cb6cb44ebc00a4e2cb36
 
 
 

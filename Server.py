@@ -89,6 +89,18 @@ def connection(socket, address):
                     'airline_name':country_airline
                 }
 
+<<<<<<< HEAD
+=======
+                for name in json_result['data']:
+                    if name["country_name"] == country_name:
+                            country_airline = name["airline_name"]
+
+                    parameters = {
+                        'access_key': access_key,
+                        'limit': limit,
+                        'airline_name': country_airline
+                    }
+>>>>>>> f995f7fdac60fe4349b3cb6cb44ebc00a4e2cb36
             elif option == 4:
                 flight_icao = socket.recv(BufferSize).decode(Encoding)
                 parameters = {
