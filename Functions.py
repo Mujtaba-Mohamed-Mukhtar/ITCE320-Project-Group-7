@@ -153,8 +153,6 @@ def send_records (socket, option, json_response):
 
 
 
-
-<<<<<<< HEAD
 def receiving_records (socket):
 
     i = 1
@@ -178,9 +176,6 @@ def receiving_records (socket):
               '\n  gate:',gate.decode(Encoding))
         i+=1
         stop_point+=1
-
-=======
->>>>>>> f995f7fdac60fe4349b3cb6cb44ebc00a4e2cb36
 
 
 
