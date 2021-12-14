@@ -7,12 +7,19 @@ import time
 limit = 5
 
 def send_records (socket, option, json_response):
+    
 
 
 
     if option == 1:
 
+        print('  List of  all arrived flights')
+
+        No_records = True
+
         for records in json_response['data']:
+            if records["flight_status"] == "landed":
+                No_records = False
 
             socket.send(records["flight"]["iata"].encode(Encoding))
             time.sleep(0.01)
@@ -36,9 +43,18 @@ def send_records (socket, option, json_response):
 
 
         print('  records sent\n')
+        if No_records:
+            socket.send('no records'.encode(Encoding))
+        else:
+            socket.send('STOP'.encode(Encoding))
+
+
 
 
     elif option == 2:
+        print('  List of delayed flights')
+
+        No_records = True
 
         for records in json_response['data']:
             socket.sendall(records["flight"]["iata"].encode(Encoding))
@@ -59,11 +75,42 @@ def send_records (socket, option, json_response):
             socket.send(str(records["departure"]["gate"]).encode(Encoding))
             time.sleep(0.01)
         print('  records sent\n')
+        if No_records:
+            socket.send('no records'.encode(Encoding))
+        else:
+            socket.send('STOP'.encode(Encoding))
+
 
 
     elif option == 3:
 
+        country_name = socket.recv(BufferSize).decode(Encoding)
+
+        print('  All flights arriving from', country_name)
+
+        country_parameters = {
+            'access_key': access_key,
+            'limit': 1
+        }
+        city_api_response = requests.get('http://api.aviationstack.com/v1/airports', country_parameters)
+        if city_api_response.status_code != 200:
+            print('!' * 5, 'Request error')
+            return
+
+        json_result = city_api_response.json()
+
+        country_airport = ' '
+
+        for name in json_result['data']:
+            if name["country_name"] == country_name:
+                country_airport = name["airline_name"]
+
+        No_records = True
+
+
         for records in json_response['data']:
+            if records["departure"]["airport"] == country_airport:
+                No_records = False
             socket.sendall(records["flight"]["iata"].encode(Encoding))
             time.sleep(0.01)
 
@@ -82,9 +129,21 @@ def send_records (socket, option, json_response):
             socket.send(str(records["departure"]["gate"]).encode(Encoding))
             time.sleep(0.01)
         print('  records sent\n')
+        if No_records:
+            socket.send('no records'.encode(Encoding))
+        else:
+            socket.send('STOP'.encode(Encoding))
+
+
 
     elif option == 4:
+        flight_icao = socket.recv(BufferSize).decode(Encoding)
+        No_records = True
+
         for records in json_response['data']:
+            if records["flight"]["icao"]:
+                No_records = False
+
             socket.sendall(records["flight"]["iata"].encode(Encoding))
             time.sleep(0.01)
 
@@ -124,30 +183,14 @@ def send_records (socket, option, json_response):
             socket.send(str(records["arrival"]["delay"]).encode(Encoding))
             time.sleep(0.01)
         print('  records sent\n')
+        if No_records:
+            socket.send('no records'.encode(Encoding))
+        else:
+            socket.send('STOP'.encode(Encoding))
+        else:
+        return 'quit'
 
 
-
-    elif option == 3:
-
-        for records in json_response['data']:
-            socket.sendall(records["flight"]["iata"].encode(Encoding))
-            time.sleep(0.01)
-
-            socket.send(records["departure"]["airport"].encode(Encoding))
-            time.sleep(0.01)
-
-            socket.send(str(records["departure"]["actual"]).encode(Encoding))
-            time.sleep(0.01)
-
-            socket.send(str(records["arrival"]["estimated"]).encode(Encoding))
-            time.sleep(0.01)
-
-            socket.send(str(records["departure"]["terminal"]).encode(Encoding))
-            time.sleep(0.01)
-
-            socket.send(str(records["departure"]["gate"]).encode(Encoding))
-            time.sleep(0.01)
-        print('  records sent\n')
 
 
 
