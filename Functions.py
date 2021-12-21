@@ -1,3 +1,10 @@
+'''
+this program script contain all the function used to send and receive the data between the
+client and the server, it also contain function to check for errors in retrieving and sending records
+'''
+
+
+
 import socket
 import requests
 BufferSize = 4096
@@ -5,14 +12,14 @@ Encoding = 'ascii'
 import time
 
 access_key = '843591f5114e7c7994823d002e7b6013'
-limit = 5
+limit = 100
+
 
 def send_records (socket, option, json_response):
 
-
-
     if option == 1:
 
+        # this option select all the arrived flights records and send them to the client
         print('  List of  all arrived flights')
 
         No_records = True
@@ -47,9 +54,9 @@ def send_records (socket, option, json_response):
         else:
             socket.send('STOP'.encode(Encoding))
 
-
     elif option == 2:
 
+        # this option select all the delayed flights records and send them to the client
         print('  List of delayed flights')
 
         No_records = True
@@ -82,16 +89,17 @@ def send_records (socket, option, json_response):
         else:
             socket.send('STOP'.encode(Encoding))
 
-
     elif option == 3:
 
+        '''this option receive a city name from the client and select all the flights records 
+        arriving from that city and send them to the client'''
         country_name = socket.recv(BufferSize).decode(Encoding)
 
         print('  All flights arriving from', country_name)
 
         country_parameters = {
             'access_key': access_key,
-            'limit': 1
+            'limit': limit
         }
         city_api_response = requests.get('http://api.aviationstack.com/v1/airports', country_parameters)
         if city_api_response.status_code != 200:
@@ -100,17 +108,18 @@ def send_records (socket, option, json_response):
 
         json_result = city_api_response.json()
 
-        country_airport = ' '
+        country_iata_code = ' '
 
         for name in json_result['data']:
-            if name["country_name"] == country_name:
-                country_airport = name["airline_name"]
+            if name["country_name"] == country_name.title():
+                country_iata_code = str(name["iata_code"])
+                break
 
         No_records = True
 
         for records in json_response['data']:
 
-            if records["departure"]["airport"] == country_airport:
+            if records["departure"]["iata"] == country_iata_code:
                 No_records = False
 
                 socket.sendall(records["flight"]["iata"].encode(Encoding))
@@ -138,6 +147,8 @@ def send_records (socket, option, json_response):
 
     elif option == 4:
 
+        '''this option receive a flight icao code from the client and select all the flights records 
+                that have the same code and send them to the client'''
         flight_icao = socket.recv(BufferSize).decode(Encoding)
         No_records = True
 
@@ -188,6 +199,8 @@ def send_records (socket, option, json_response):
             socket.send('no records'.encode(Encoding))
         else:
             socket.send('STOP'.encode(Encoding))
+
+    # if the client select other option the program will print quit massage and end the connection
     else:
         return 'quit'
 
@@ -236,7 +249,7 @@ def recv_flights(socket):
     while True:
         flight_code = socket.recv(BufferSize).decode(Encoding)
         if flight_code == 'no records':
-            print('== No flight records')
+            print('\n== No flight records')
             break
         elif flight_code == 'STOP':
             break
@@ -269,7 +282,7 @@ def flight_details(socket):
     while True:
         flight_code = socket.recv(BufferSize).decode(Encoding)
         if flight_code == 'no records':
-            print('== No arrived flight')
+            print('\n== No arrived flight')
             break
         elif flight_code == 'STOP':
             break
