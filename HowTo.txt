@@ -1,0 +1,13 @@
+To use the program first you need to run the server script the run the client script, after that the program will ask
+you to enter the client username, then, the program will display 5 options to select from (1 to 5).
+option 1:
+ will print all the arrived flights
+option 2:
+ print all the Delayed flights
+option 3:
+ the program will ask the user to enter a name of a city, then, it will print all the flights arriving from that city
+option 4:
+ the program will ask the user to enter a flight icao code then it will display information about the flight.
+option 5:
+ the program will keep running until the user selects this option, the program will end.
+

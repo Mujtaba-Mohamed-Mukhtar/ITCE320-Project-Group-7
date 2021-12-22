@@ -33,6 +33,7 @@ def send_records (socket, option, json_response):
                 socket.send(records["flight"]["iata"].encode(Encoding))
                 time.sleep(0.01)
 
+                # this exception is used to check if the program can send the requested information or not
                 try:
                     socket.send(str(records["departure"]["airport"]).encode(Encoding))
                     time.sleep(0.01)
@@ -40,7 +41,7 @@ def send_records (socket, option, json_response):
                     socket.send(str(records["arrival"]["airport"]).encode(Encoding))
                     time.sleep(0.01)
 
-                socket.send(records["arrival"]["actual"].encode(Encoding))
+                socket.send(str(records["arrival"]["actual"]).encode(Encoding))
                 time.sleep(0.01)
 
                 socket.send(str(records["arrival"]["terminal"]).encode(Encoding))
@@ -93,33 +94,16 @@ def send_records (socket, option, json_response):
 
         '''this option receive a city name from the client and select all the flights records 
         arriving from that city and send them to the client'''
-        country_name = socket.recv(BufferSize).decode(Encoding)
+        city_name = socket.recv(BufferSize).decode(Encoding)
 
-        print('  All flights arriving from', country_name)
+        print('  All flights arriving from', city_name)
 
-        country_parameters = {
-            'access_key': access_key,
-            'limit': limit
-        }
-        city_api_response = requests.get('http://api.aviationstack.com/v1/airports', country_parameters)
-        if city_api_response.status_code != 200:
-            print('!' * 5, 'Request error')
-            return
-
-        json_result = city_api_response.json()
-
-        country_iata_code = ' '
-
-        for name in json_result['data']:
-            if name["country_name"] == country_name.title():
-                country_iata_code = str(name["iata_code"])
-                break
 
         No_records = True
 
         for records in json_response['data']:
 
-            if records["departure"]["iata"] == country_iata_code:
+            if city_name in records["departure"]["airport"]:
                 No_records = False
 
                 socket.sendall(records["flight"]["iata"].encode(Encoding))
@@ -153,52 +137,58 @@ def send_records (socket, option, json_response):
         No_records = True
 
         for records in json_response['data']:
-            if records["flight"]["icao"]:
+            if records["flight"]["icao"] == flight_icao:
                 No_records = False
 
-                socket.sendall(records["flight"]["iata"].encode(Encoding))
-                time.sleep(0.01)
+                try:
 
-                socket.sendall(records["flight_date"].encode(Encoding))
-                time.sleep(0.01)
+                    socket.sendall(records["flight"]["iata"].encode(Encoding))
+                    time.sleep(0.01)
 
-                socket.send(records["departure"]["airport"].encode(Encoding))
-                time.sleep(0.01)
+                    socket.sendall(records["flight_date"].encode(Encoding))
+                    time.sleep(0.01)
 
-                socket.send(str(records["departure"]["gate"]).encode(Encoding))
-                time.sleep(0.01)
+                    socket.send(records["departure"]["airport"].encode(Encoding))
+                    time.sleep(0.01)
 
-                socket.send(str(records["departure"]["terminal"]).encode(Encoding))
-                time.sleep(0.01)
+                    socket.send(str(records["departure"]["gate"]).encode(Encoding))
+                    time.sleep(0.01)
 
-                socket.send(str(records["arrival"]["airport"]).encode(Encoding))
-                time.sleep(0.01)
+                    socket.send(str(records["departure"]["terminal"]).encode(Encoding))
+                    time.sleep(0.01)
 
-                socket.send(str(records["arrival"]["terminal"]).encode(Encoding))
-                time.sleep(0.01)
+                    socket.send(str(records["arrival"]["airport"]).encode(Encoding))
+                    time.sleep(0.01)
 
-                socket.send(str(records["arrival"]["gate"]).encode(Encoding))
-                time.sleep(0.01)
+                    socket.send(str(records["arrival"]["terminal"]).encode(Encoding))
+                    time.sleep(0.01)
 
-                socket.send(str(records["flight_status"]).encode(Encoding))
-                time.sleep(0.01)
+                    socket.send(str(records["arrival"]["gate"]).encode(Encoding))
+                    time.sleep(0.01)
 
-                socket.send(str(records["departure"]["scheduled"]).encode(Encoding))
-                time.sleep(0.01)
+                    socket.send(str(records["flight_status"]).encode(Encoding))
+                    time.sleep(0.01)
 
-                socket.send(str(records["arrival"]["scheduled"]).encode(Encoding))
-                time.sleep(0.01)
+                    socket.send(str(records["departure"]["scheduled"]).encode(Encoding))
+                    time.sleep(0.01)
 
-                socket.send(str(records["arrival"]["estimated"]).encode(Encoding))
-                time.sleep(0.01)
+                    socket.send(str(records["arrival"]["scheduled"]).encode(Encoding))
+                    time.sleep(0.01)
 
-                socket.send(str(records["arrival"]["delay"]).encode(Encoding))
-                time.sleep(0.01)
+                    socket.send(str(records["arrival"]["estimated"]).encode(Encoding))
+                    time.sleep(0.01)
+
+                    socket.send(str(records["arrival"]["delay"]).encode(Encoding))
+                    time.sleep(0.01)
+                except Exception:
+                    continue
+
+                break
+
         print('  records sent\n')
         if No_records:
             socket.send('no records'.encode(Encoding))
-        else:
-            socket.send('STOP'.encode(Encoding))
+
 
     # if the client select other option the program will print quit massage and end the connection
     else:
@@ -219,7 +209,7 @@ def receiving_records (socket):
     while True:
         flight_code = socket.recv(BufferSize).decode(Encoding)
         if flight_code == 'no records':
-            print('== No arrived flight')
+            print('='*5, ' No flight records ', '='*5, '\n')
             break
         elif flight_code == 'STOP':
             break
@@ -249,7 +239,7 @@ def recv_flights(socket):
     while True:
         flight_code = socket.recv(BufferSize).decode(Encoding)
         if flight_code == 'no records':
-            print('\n== No flight records')
+            print('='*5, ' No flight records ', '='*5, '\n')
             break
         elif flight_code == 'STOP':
             break
@@ -279,54 +269,48 @@ def recv_flights(socket):
 
 def flight_details(socket):
 
-    while True:
-        flight_code = socket.recv(BufferSize).decode(Encoding)
-        if flight_code == 'no records':
-            print('\n== No arrived flight')
-            break
-        elif flight_code == 'STOP':
-            break
+    flight_code = socket.recv(BufferSize).decode(Encoding)
+    if flight_code == 'no records':
+        print('='*5, ' No flight records ', '='*5, '\n')
 
-        date = socket.recv(BufferSize).decode(Encoding)
+    date = socket.recv(BufferSize).decode(Encoding)
 
-        departure_airport = socket.recv(BufferSize).decode(Encoding)
+    departure_airport = socket.recv(BufferSize).decode(Encoding)
 
-        departure_gate = socket.recv(BufferSize).decode(Encoding)
+    departure_gate = socket.recv(BufferSize).decode(Encoding)
 
-        departure_terminal = socket.recv(BufferSize).decode(Encoding)
+    departure_terminal = socket.recv(BufferSize).decode(Encoding)
 
-        arrival_airport = socket.recv(BufferSize).decode(Encoding)
+    arrival_airport = socket.recv(BufferSize).decode(Encoding)
 
-        arrival_terminal = socket.recv(BufferSize).decode(Encoding)
+    arrival_terminal = socket.recv(BufferSize).decode(Encoding)
 
-        arrival_gate = socket.recv(BufferSize).decode(Encoding)
+    arrival_gate = socket.recv(BufferSize).decode(Encoding)
 
-        flight_status = socket.recv(BufferSize).decode(Encoding)
+    flight_status = socket.recv(BufferSize).decode(Encoding)
 
-        scheduled_departure = socket.recv(BufferSize).decode(Encoding)
+    scheduled_departure = socket.recv(BufferSize).decode(Encoding)
 
-        scheduled_arrival = socket.recv(BufferSize).decode(Encoding)
+    scheduled_arrival = socket.recv(BufferSize).decode(Encoding)
 
-        estimated_arrival = socket.recv(BufferSize).decode(Encoding)
+    estimated_arrival = socket.recv(BufferSize).decode(Encoding)
 
-        delay = socket.recv(BufferSize).decode(Encoding)
+    delay = socket.recv(BufferSize).decode(Encoding)
 
-        print('=' * 15, 'flight', '=' * 15)
-        print('  Flight code:', flight_code,
-              '\n  Date:',date,
-              '\n  Departure airport:', departure_airport,
-              '\n  Departure gate:', departure_gate,
-              '\n  Departure terminal:',departure_terminal,
-              '\n  Arrival airport:', arrival_airport,
-              '\n  Arrival terminal:', arrival_terminal,
-              '\n  Arrival gate:', arrival_gate,
-              '\n  Flight status:',flight_status,
-              '\n  Scheduled departure:',scheduled_departure,
-              '\n  Scheduled arrival:',scheduled_arrival,
-              '\n  Estimated arrival:',estimated_arrival,
-              '\n  Delay:',delay,'\n')
-
-
+    print('=' * 15, 'flight', '=' * 15)
+    print('  Flight code:', flight_code,
+          '\n  Date:',date,
+          '\n  Departure airport:', departure_airport,
+          '\n  Departure gate:', departure_gate,
+          '\n  Departure terminal:',departure_terminal,
+          '\n  Arrival airport:', arrival_airport,
+          '\n  Arrival terminal:', arrival_terminal,
+          '\n  Arrival gate:', arrival_gate,
+          '\n  Flight status:',flight_status,
+          '\n  Scheduled departure:',scheduled_departure,
+          '\n  Scheduled arrival:',scheduled_arrival,
+          '\n  Estimated arrival:',estimated_arrival,
+          '\n  Delay:',delay,'\n')
 
 
 
